@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Apple 风 UI 模板 · Starter</title>
+<link rel="stylesheet" href="tokens.css" />
+<link rel="stylesheet" href="kit.css" />
+<style>
+  /* 图标统一约定：24×24 画布、1.5px 描边、currentColor。全站只用这一套。 */
+  .i {
+    width: 16px; height: 16px; flex: none;
+    fill: none; stroke: currentColor; stroke-width: 1.5;
+    stroke-linecap: round; stroke-linejoin: round;
+  }
+  .i--sm { width: 14px; height: 14px; }
+  .sprite { display: none; }
+
+  /* ---- 设置页 · 毛玻璃材质预览台 ----
+     底下铺桌面同款多彩渐变（--desk-* 演示令牌），中间摆官方 .glass 卡片。
+     预览卡片走的就是 --material-blur-thick 令牌，设置一改预览即变。 */
+  .glass-demo {
+    position: relative;
+    height: 200px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: var(--hairline) solid var(--separator-soft);
+    background:
+      radial-gradient(280px 180px at 16% 18%, var(--desk-1) 0%, transparent 62%),
+      radial-gradient(300px 200px at 86% 14%, var(--desk-2) 0%, transparent 62%),
+      radial-gradient(320px 220px at 26% 96%, var(--desk-3) 0%, transparent 66%),
+      radial-gradient(1300px 850px at 52% 55%, var(--desk-3) 0%, transparent 68%),
+      linear-gradient(150deg, var(--desk-4), var(--desk-5));
+  }
+  .glass-demo__card {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 260px;
+    padding: var(--space-5) var(--space-7);
+    text-align: center;
+  }
+  .glass-demo__title {
+    font-size: var(--text-base);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-tight);
+  }
+  .glass-demo__sub { font-size: var(--text-xs); color: var(--label-2); margin-top: var(--space-1); }
+
+  /* 设置页的分组成容器：macOS「系统设置」那种圆角内嵌列表 */
+  .settings-group {
+    border: var(--hairline) solid var(--separator-soft);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  #glassLevelRow.is-off { opacity: 0.4; pointer-events: none; }
+
+  /* 视图切换靠 [hidden]，但 .grid-3 / .btn / .badge 的 author display 规则
+     会盖过 UA 的 [hidden]{display:none}，必须显式补上 */
+  [data-page][hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ===================== 图标精灵 ===================== -->
+<svg class="sprite" aria-hidden="true">
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></symbol>
+  <symbol id="i-fetch" viewBox="0 0 24 24"><path d="M12 3v12M7.5 10.5 12 15l4.5-4.5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></symbol>
+  <symbol id="i-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M9 9.5V20"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.2 2"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.6v2.6M12 18.8v2.6M4.4 7.4l2.2 1.3M17.4 15.3l2.2 1.3M4.4 16.6l2.2-1.3M17.4 8.7l2.2-1.3"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4.5 4.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2 12h2M20 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8.4 8.4 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></symbol>
+  <symbol id="i-expand" viewBox="0 0 24 24"><path d="M9 4H4v5M15 20h5v-5M20 9V4h-5M4 15v5h5"/></symbol>
+</svg>
+
+<div class="desk">
+  <div class="win">
+
+    <!-- ===================== 标题栏（unified toolbar） ===================== -->
+    <header class="titlebar">
+      <div class="traffic" title="红黄绿 —— Windows 上需自绘标题栏">
+        <i></i><i></i><i></i>
+      </div>
+      <div class="titlebar__title">
+        我的应用 <span class="titlebar__sub">Starter</span>
+      </div>
+      <div class="titlebar__spacer"></div>
+
+      <label class="search">
+        <svg class="i i--sm"><use href="#i-search"/></svg>
+        <input type="search" placeholder="搜索…" />
+      </label>
+
+      <!-- 全览：窗口撑到内容高度，一次看完所有组件 -->
+      <button class="btn btn--secondary btn--sm" id="viewToggle" title="切换窗口 / 全览">
+        <svg class="i i--sm"><use href="#i-expand"/></svg><span id="viewLabel">全览</span>
+      </button>
+
+      <!-- 强调色：对应 macOS「系统设置 → 外观 → 强调色」 -->
+      <div class="row" style="gap:6px" id="tintRow" title="系统强调色">
+        <span class="swatch is-on" data-tint="var(--system-blue)"   style="background:var(--system-blue);color:var(--system-blue)"></span>
+        <span class="swatch" data-tint="var(--system-purple)" style="background:var(--system-purple);color:var(--system-purple)"></span>
+        <span class="swatch" data-tint="var(--system-pink)"   style="background:var(--system-pink);color:var(--system-pink)"></span>
+        <span class="swatch" data-tint="var(--system-orange)" style="background:var(--system-orange);color:var(--system-orange)"></span>
+        <span class="swatch" data-tint="var(--system-green)"  style="background:var(--system-green);color:var(--system-green)"></span>
+        <span class="swatch" data-tint="var(--system-gray)"   style="background:var(--system-gray);color:var(--system-gray)"></span>
+      </div>
+    </header>
+
+    <div class="win__body">
+
+      <!-- ===================== 侧栏 =====================
+           加页面三步：① 加 nav-item（data-nav-page="你的页面名"）
+                      ② 加 <section data-page="你的页面名" hidden>
+                      ③ PAGES 数组加名字 -->
+      <nav class="sidebar">
+        <div class="sidebar__heading">业务</div>
+        <div class="nav-item is-active" data-nav data-nav-page="home"><svg class="i"><use href="#i-table"/></svg>概览</div>
+        <div class="nav-item" data-nav data-nav-page="page-a"><svg class="i"><use href="#i-fetch"/></svg>页面占位 A</div>
+
+        <div class="sidebar__gap"></div>
+        <div class="sidebar__heading">系统</div>
+        <div class="nav-item" data-nav data-nav-page="settings"><svg class="i"><use href="#i-gear"/></svg>设置</div>
+      </nav>
+
+      <!-- ===================== 主区 ===================== -->
+      <main class="main">
+        <div class="content">
+
+          <!-- ---------- 概览（示例页：照这个模式写你的业务） ---------- -->
+          <div class="grid-3" data-page="home" data-eid="home-stats">
+            <div class="panel" data-eid="stat-one"><div class="panel__body">
+              <div class="stat__value" data-etext>0</div>
+              <div class="stat__label" data-etext>指标一</div>
+            </div></div>
+            <div class="panel" data-eid="stat-two"><div class="panel__body">
+              <div class="stat__value" style="color:var(--tint)" data-etext>0</div>
+              <div class="stat__label" data-etext>指标二</div>
+            </div></div>
+            <div class="panel" data-eid="stat-three"><div class="panel__body">
+              <div class="stat__value" style="color:var(--system-green)" data-etext>0%</div>
+              <div class="stat__label" data-etext>指标三</div>
+            </div></div>
+          </div>
+
+          <section class="panel" data-page="home" data-eid="panel-home-main">
+            <div class="panel__head">
+              <span class="panel__title" data-etext>主内容区</span>
+              <span class="panel__sub">把业务组件写在这里 · 空态/表格/表单见 kit.css</span>
+              <div class="spacer"></div>
+              <button class="btn btn--primary btn--sm" data-eid="btn-main-action"><svg class="i i--sm"><use href="#i-plus"/></svg>主操作</button>
+            </div>
+            <div class="panel__body">
+              <div class="empty">
+                <svg class="i"><use href="#i-sliders"/></svg>
+                <div class="empty__title">从这里开始</div>
+                <div class="empty__msg">侧栏「页面占位 A」演示了如何新增一个页面；「设置」里是毛玻璃材质与外观的完整控制台。</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ---------- 页面占位 A（空状态模式） ---------- -->
+          <section class="panel" data-page="page-a" data-eid="panel-page-a" hidden>
+            <div class="panel__head">
+              <span class="panel__title" data-etext>页面占位 A</span>
+              <span class="panel__sub">复制这个 section 即可新增页面</span>
+            </div>
+            <div class="panel__body">
+              <div class="empty">
+                <svg class="i"><use href="#i-fetch"/></svg>
+                <div class="empty__title">还没有内容</div>
+                <div class="empty__msg">表格用 .table，列表行用 .list__row，表单用 .field + .input —— 全部在 kit.css 里。</div>
+                <button class="btn btn--primary btn--sm" style="margin-top:var(--space-2)">新建</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- ---------- 设置 · 外观（毛玻璃材质） ----------
+               全部控件只覆写 :root 上的 --material-blur* 令牌与
+               --bg-* 表面透明度（color-mix 派生），组件层零改动。 -->
+          <section class="panel" data-page="settings" data-eid="panel-settings" hidden>
+            <div class="panel__head">
+              <span class="panel__title" data-etext>外观</span>
+              <span class="panel__sub">材质与视觉效果 · 改动全局即时生效</span>
+            </div>
+            <div class="panel__body stack" style="gap:var(--space-6)">
+
+              <!-- 预览台：桌面多彩底 + 官方 .glass 卡片，材质令牌一变即见 -->
+              <div class="glass-demo">
+                <div class="glass glass-demo__card">
+                  <div class="glass-demo__title">毛玻璃材质 · 实时预览</div>
+                  <div class="glass-demo__sub">改动会同步到标题栏、侧栏、弹窗与通知</div>
+                </div>
+              </div>
+
+              <div class="settings-group">
+                <div class="list__row">
+                  <div class="list__main">
+                    <div class="list__title">深色外观</div>
+                    <div class="list__sub">明亮 / 深色两档</div>
+                  </div>
+                  <div class="segmented">
+                    <span class="segmented__item is-on" data-theme-set="light" title="明亮外观"><svg class="i i--sm"><use href="#i-sun"/></svg></span>
+                    <span class="segmented__item" data-theme-set="dark" title="深色外观"><svg class="i i--sm"><use href="#i-moon"/></svg></span>
+                  </div>
+                </div>
+                <div class="list__row">
+                  <div class="list__main">
+                    <div class="list__title">毛玻璃效果</div>
+                    <div class="list__sub">窗口底透出桌面壁纸，标题栏 / 侧栏变成磨砂玻璃；关闭后恢复实底</div>
+                  </div>
+                  <span class="switch is-on" id="glassSwitch"></span>
+                </div>
+                <div class="list__row" id="glassLevelRow">
+                  <div class="list__main">
+                    <div class="list__title">材质强度</div>
+                    <div class="list__sub">三档同调模糊半径与透光度，浓郁档壁纸透得最多</div>
+                  </div>
+                  <div class="segmented" id="glassLevelSeg">
+                    <span class="segmented__item" data-glass-level="soft">轻盈</span>
+                    <span class="segmented__item is-on" data-glass-level="normal">标准</span>
+                    <span class="segmented__item" data-glass-level="strong">浓郁</span>
+                  </div>
+                </div>
+              </div>
+
+              <span class="hint">等价于 macOS「辅助功能 → 显示 → 透明度」的产品化做法：关掉模糊但保留层级关系。</span>
+
+            </div>
+          </section>
+
+        </div>
+      </main>
+    </div>
+
+    <!-- Toast 宿主：动作完成时由 JS 塞 .toast 进来（样式见 kit.css） -->
+    <div class="toast-host"></div>
+
+  </div>
+</div>
+
+<script>
+  const root = document.documentElement;
+
+  /* 明暗切换：令牌全在 tokens.css，这里只切一个 data-theme 属性。
+     标题栏与设置页的明暗分段控件共用 data-theme-set，一起联动。 */
+  function setTheme(next) {
+    root.dataset.theme = next;
+    document.querySelectorAll('[data-theme-set]').forEach((x) => {
+      x.classList.toggle('is-on', x.dataset.themeSet === next);
+    });
+  }
+  document.querySelectorAll('[data-theme-set]').forEach((el) => {
+    el.addEventListener('click', () => setTheme(el.dataset.themeSet));
+  });
+
+  /* 窗口 / 全览切换 */
+  const viewToggle = document.getElementById('viewToggle');
+  const viewLabel = document.getElementById('viewLabel');
+  function setView(next) {
+    root.dataset.view = next === 'tall' ? 'tall' : 'window';
+    viewLabel.textContent = root.dataset.view === 'tall' ? '窗口' : '全览';
+  }
+  viewToggle.addEventListener('click', () => {
+    setView(root.dataset.view === 'tall' ? 'window' : 'tall');
+  });
+  setView('window');
+
+  /* 强调色 */
+  document.querySelectorAll('#tintRow .swatch').forEach((el) => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('#tintRow .swatch').forEach((x) => x.classList.remove('is-on'));
+      el.classList.add('is-on');
+      root.style.setProperty('--tint', el.dataset.tint);
+    });
+  });
+
+  /* ---------- 视图切换 ----------
+     加页面三步：nav-item（data-nav-page）→ section（data-page）→ PAGES 数组 */
+  const PAGES = ['home', 'page-a', 'settings'];
+  function showPage(name) {
+    document.querySelectorAll('[data-page]').forEach((el) => {
+      el.hidden = el.dataset.page !== name;
+    });
+  }
+  document.querySelectorAll('[data-nav]').forEach((el) => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('[data-nav]').forEach((x) => x.classList.remove('is-active'));
+      el.classList.add('is-active');
+      showPage(el.dataset.navPage || 'home');
+    });
+  });
+
+  /* ---------- 毛玻璃材质设置 ----------
+     模糊走 --material-blur* 三档令牌；表面透明度用 color-mix 从
+     --bg-*-solid 派生（引用 -solid 而非自身，避免自定义属性循环引用）。
+     档位同时调「模糊半径 + 透光度」：只调 blur 在平滑壁纸上看不出差。 */
+  const mix = (token, pct) => `color-mix(in srgb, var(${token}) ${pct}%, transparent)`;
+  const GLASS_PRESETS = {
+    off: {
+      blur: 'none', thin: 'none', thick: 'none',
+      win: '', content: '', raised: '', sunken: '', popover: ''
+    },
+    soft: {
+      blur: 'saturate(207%) blur(16px)', thin: 'saturate(207%) blur(9px)', thick: 'saturate(207%) blur(32px)',
+      win: mix('--bg-window-solid', 55), content: mix('--bg-content-solid', 53),
+      raised: mix('--bg-raised-solid', 60), sunken: mix('--bg-sunken-solid', 61), popover: mix('--bg-popover-solid', 58)
+    },
+    normal: {
+      blur: 'saturate(230%) blur(35px)', thin: 'saturate(230%) blur(18px)', thick: 'saturate(230%) blur(58px)',
+      win: mix('--bg-window-solid', 38), content: mix('--bg-content-solid', 36),
+      raised: mix('--bg-raised-solid', 44), sunken: mix('--bg-sunken-solid', 49), popover: mix('--bg-popover-solid', 49)
+    },
+    strong: {
+      blur: 'saturate(253%) blur(51px)', thin: 'saturate(253%) blur(28px)', thick: 'saturate(253%) blur(92px)',
+      win: mix('--bg-window-solid', 26), content: mix('--bg-content-solid', 21),
+      raised: mix('--bg-raised-solid', 32), sunken: mix('--bg-sunken-solid', 38), popover: mix('--bg-popover-solid', 38)
+    }
+  };
+  const glassSwitch = document.getElementById('glassSwitch');
+  const glassLevelRow = document.getElementById('glassLevelRow');
+  const glassLevelSeg = document.getElementById('glassLevelSeg');
+  let glassOn = true;
+  let glassLevel = 'normal';
+
+  function applyGlass() {
+    const p = glassOn ? GLASS_PRESETS[glassLevel] : GLASS_PRESETS.off;
+    root.style.setProperty('--material-blur', p.blur);
+    root.style.setProperty('--material-blur-thin', p.thin);
+    root.style.setProperty('--material-blur-thick', p.thick);
+    /* 表面透明度随档位；关闭时清空覆写，恢复 tokens.css 的实底 */
+    root.style.setProperty('--bg-window', p.win);
+    root.style.setProperty('--bg-content', p.content);
+    root.style.setProperty('--bg-raised', p.raised);
+    root.style.setProperty('--bg-sunken', p.sunken);
+    root.style.setProperty('--bg-popover', p.popover);
+    glassSwitch.classList.toggle('is-on', glassOn);
+    glassLevelRow.classList.toggle('is-off', !glassOn);
+    glassLevelSeg.querySelectorAll('.segmented__item').forEach((x) => {
+      x.classList.toggle('is-on', glassOn && x.dataset.glassLevel === glassLevel);
+    });
+  }
+  glassSwitch.addEventListener('click', () => { glassOn = !glassOn; applyGlass(); });
+  glassLevelSeg.querySelectorAll('.segmented__item').forEach((el) => {
+    el.addEventListener('click', () => { glassLevel = el.dataset.glassLevel; applyGlass(); });
+  });
+  applyGlass();
+
+  /* ---------- URL 参数，方便截图与演示分享 ----------
+     ?theme=dark | light      ?tint=purple | pink | …
+     ?view=tall | window      ?page=home | page-a | settings
+     ?glass=off | soft | normal | strong      ?only=<面板id>
+     例：index.html?theme=dark&tint=purple&view=tall               */
+  const q = new URLSearchParams(location.search);
+  if (q.get('theme')) setTheme(q.get('theme'));
+  if (q.get('view')) setView(q.get('view'));
+  const tintMap = { blue: '--system-blue', purple: '--system-purple', pink: '--system-pink',
+                    orange: '--system-orange', green: '--system-green', gray: '--system-gray' };
+  const pick = tintMap[q.get('tint')];
+  if (pick) {
+    root.style.setProperty('--tint', `var(${pick})`);
+    document.querySelectorAll('#tintRow .swatch').forEach((x) => {
+      x.classList.toggle('is-on', x.dataset.tint === `var(${pick})`);
+    });
+  }
+  const pageParam = q.get('page');
+  if (pageParam && PAGES.includes(pageParam)) {
+    document.querySelectorAll('[data-nav]').forEach((x) => {
+      x.classList.toggle('is-active', x.dataset.navPage === pageParam);
+    });
+    showPage(pageParam);
+  }
+  const glassParam = q.get('glass');
+  if (glassParam) {
+    glassOn = glassParam !== 'off';
+    if (GLASS_PRESETS[glassParam]) glassLevel = glassParam;
+    applyGlass();
+  }
+  /* ?only=<面板id> —— 只显示这一块，方便出图与聚焦演示 */
+  if (q.get('only')) {
+    const keep = q.get('only');
+    document.querySelectorAll('.content > *').forEach((el) => {
+      if (el.id !== keep) el.style.display = 'none';
+      else el.hidden = false;
+    });
+  }
+</script>
+<!-- 设计模式：拖动 / 改文字 / 隐藏 / 备注，导出 change-manifest.json 给 AI 应用 -->
+<script src="design-mode.js" defer></script>
+</body>
+</html>

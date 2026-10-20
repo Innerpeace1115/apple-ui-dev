@@ -1,0 +1,244 @@
+/* ============================================================================
+   Apple 风设计令牌 · tokens.css
+   ----------------------------------------------------------------------------
+   命名体系参考 Apple Human Interface Guidelines 的语义化命名
+   （label / separator / fill / systemBackground / systemBlue ...）。
+
+   铁律：组件只引用语义变量，禁止硬编码色值。
+   换主题色只改一行 --tint。换明暗只切 <html data-theme>。
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* ---------- 1. 圆角 ----------------------------------------------------
+     Apple 的圆角是「连续圆角（squircle / superellipse）」，CSS 的
+     border-radius 只能画正圆弧 —— 这是 Web 复刻苹果最大的物理天花板。
+     应对：档位拉开、值取大一点，视觉上更接近。
+     要真 squircle 只能用 SVG path 或 CSS paint()，见 README「已知差距」。
+  ---------------------------------------------------------------------- */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;   /* 按钮 / 输入框 */
+  --radius-xl: 14px;   /* 卡片 */
+  --radius-2xl: 18px;
+  --radius-3xl: 22px;  /* 窗口 */
+  --radius-full: 999px;
+
+  --hairline: 1px;     /* macOS 上是 0.5px 物理发丝线，桌面缩放用 1px 更稳 */
+
+  /* ---------- 2. 间距：4pt 基网格 ---------------------------------------- */
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 6px;
+  --space-4: 8px;
+  --space-5: 12px;
+  --space-6: 16px;
+  --space-7: 20px;
+  --space-8: 24px;
+  --space-9: 32px;
+  --space-10: 40px;
+
+  /* ---------- 3. 字体 ----------------------------------------------------
+     SF Pro 有授权限制且 Windows 上不存在，不退而求其次也没得选。
+     Segoe UI Variable 是 Windows 11 上最接近 SF 的系统字体，字形几何相似。
+  ---------------------------------------------------------------------- */
+  --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+             "Segoe UI Variable Text", "Segoe UI", "PingFang SC",
+             "Microsoft YaHei UI", "Microsoft YaHei", "Hiragino Sans GB",
+             system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Segoe UI Mono",
+               Consolas, "JetBrains Mono", monospace;
+
+  /* macOS 桌面密度：13px 是标准控件字号，不是 16px */
+  --text-2xs: 10px;    --leading-2xs: 13px;
+  --text-xs: 11px;     --leading-xs: 14px;
+  --text-sm: 12px;     --leading-sm: 16px;
+  --text-base: 13px;   --leading-base: 18px;   /* 控件默认 */
+  --text-md: 15px;     --leading-md: 20px;
+  --text-lg: 17px;     --leading-lg: 22px;     /* 区块标题 */
+  --text-xl: 20px;     --leading-xl: 25px;
+  --text-2xl: 24px;    --leading-2xl: 30px;    /* 大标题 */
+  --text-3xl: 28px;    --leading-3xl: 34px;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  --tracking-tight: -0.01em;   /* 大字号用负字距，这是「苹果味」的细节 */
+  --tracking-normal: 0;
+  --tracking-wide: 0.01em;
+
+  /* ---------- 4. 动效 ----------------------------------------------------
+     --ease-spring 是苹果系统动画最常被复刻的那条曲线：
+     起步快、末端极缓、带一点「落定」的手感。全站统一用它。
+  ---------------------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-in-out: cubic-bezier(0.42, 0, 0.58, 1);
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-snappy: cubic-bezier(0.2, 0.9, 0.3, 1);
+
+  --dur-instant: 90ms;
+  --dur-fast: 150ms;
+  --dur-normal: 220ms;
+  --dur-slow: 320ms;
+
+  /* ---------- 5. 系统强调色（macOS「强调色」设置）-------------------------
+     只改 --tint 一行，全局按钮 / 选中态 / 焦点环 / 开关一起变。
+  ---------------------------------------------------------------------- */
+  --system-blue: #007aff;
+  --system-green: #34c759;
+  --system-indigo: #5856d6;
+  --system-orange: #ff9500;
+  --system-pink: #ff2d55;
+  --system-purple: #af52de;
+  --system-red: #ff3b30;
+  --system-teal: #30b0c7;
+  --system-yellow: #ffcc00;
+  --system-gray: #8e8e93;
+
+  --tint: var(--system-blue);
+
+  /* ---------- 6. 语义色：标签 / 分隔线 / 填充 ---------------------------- */
+  --label: rgba(0, 0, 0, 0.85);
+  --label-2: rgba(60, 60, 67, 0.6);      /* 次级文字 */
+  --label-3: rgba(60, 60, 67, 0.3);      /* 三级：占位符 */
+  --label-4: rgba(60, 60, 67, 0.18);     /* 禁用 */
+
+  --separator: rgba(60, 60, 67, 0.29);
+  --separator-soft: rgba(60, 60, 67, 0.12);
+
+  --fill-1: rgba(120, 120, 128, 0.2);    /* 输入框底 */
+  --fill-2: rgba(120, 120, 128, 0.16);   /* 次级按钮底 */
+  --fill-3: rgba(120, 120, 128, 0.12);   /* 悬停底 */
+  --fill-4: rgba(120, 120, 128, 0.08);   /* 极淡底 */
+
+  /* ---------- 7. 背景层级：从窗口底到浮层顶 ------------------------------
+     每个背景拆成两层：-solid 是实底真值，原令牌指向它。
+     毛玻璃开启时 JS 把原令牌覆写成 color-mix(-solid, X%, transparent)，
+     引用 -solid 而非自身，避免自定义属性循环引用。 */
+  --bg-window-solid: #ececec;   /* 窗口底层，macOS 窗外框的灰 */
+  --bg-window: var(--bg-window-solid);
+  --bg-content-solid: #f5f5f7;  /* 内容区底色：灰底 + 白卡，这是 macOS 的分层方式。
+                                   内容区若也用白色，卡片就浮不起来，整屏发糊。 */
+  --bg-content: var(--bg-content-solid);
+  --bg-raised-solid: #ffffff;   /* 卡片 */
+  --bg-raised: var(--bg-raised-solid);
+  --bg-sunken-solid: #f0f0f2;   /* 凹陷区（表头、面板底栏） */
+  --bg-sunken: var(--bg-sunken-solid);
+  --bg-sidebar: rgba(234, 234, 236, 0.5);   /* 要比内容区更暗一档，否则侧栏和内容糊成一片。
+                                               alpha 压低让壁纸透进来，磨砂质感才明显 */
+  --bg-toolbar: rgba(246, 246, 246, 0.55);
+  --bg-popover-solid: rgba(255, 255, 255, 0.82);
+  --bg-popover: var(--bg-popover-solid);
+  --bg-selected: rgba(0, 0, 0, 0.055);
+  --bg-hover: rgba(0, 0, 0, 0.04);
+
+  /* ---------- 8. 材质（毛玻璃）------------------------------------------
+     Web 只能近似系统材质：三层叠加 = 模糊 + 提饱和 + 半透明底。
+     窗口级的真材质要用 Electron 的 backgroundMaterial，见 README。
+  ---------------------------------------------------------------------- */
+  --material-blur: saturate(180%) blur(20px);
+  --material-blur-thin: saturate(180%) blur(12px);
+  --material-blur-thick: saturate(200%) blur(40px);
+  --material-border: rgba(255, 255, 255, 0.55);   /* 玻璃上沿高光 */
+  --material-edge: rgba(0, 0, 0, 0.08);           /* 玻璃外描边 */
+
+  /* ---------- 9. 阴影：苹果的阴影短、淡、贴地，不要大黑糊 ------------- */
+  --shadow-1: 0 1px 1px rgba(0, 0, 0, 0.04),
+              0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-2: 0 2px 8px rgba(0, 0, 0, 0.08),
+              0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-3: 0 12px 32px rgba(0, 0, 0, 0.14),
+              0 2px 6px rgba(0, 0, 0, 0.08);
+  --shadow-window: 0 24px 70px rgba(0, 0, 0, 0.28),
+                   0 4px 14px rgba(0, 0, 0, 0.12);
+  --shadow-popover: 0 10px 34px rgba(0, 0, 0, 0.16),
+                    0 0 0 0.5px rgba(0, 0, 0, 0.1);
+
+  /* ---------- 10. 焦点环：macOS 是「外发光」而不是换边框颜色 ---------- */
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--tint) 38%, transparent);
+  --focus-ring-inset: inset 0 0 0 1px color-mix(in srgb, var(--tint) 55%, transparent);
+
+  /* ---------- 11. 控件尺寸 ---------------------------------------------- */
+  --control-h-sm: 22px;
+  --control-h: 28px;
+  --control-h-lg: 34px;
+  --sidebar-w: 216px;
+  --titlebar-h: 52px;
+  --row-h: 34px;
+
+  /* ---------- 12. 演示壁纸：只给 index.html 当背景，不属于产品 UI ---------- */
+  --desk-1: #ffb37b;
+  --desk-2: #7aa8ff;
+  --desk-3: #b98cff;
+  --desk-4: #2a2f45;
+  --desk-5: #171a26;
+}
+
+/* ============================================================================
+   深色主题
+   ========================================================================== */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --system-blue: #0a84ff;
+  --system-green: #30d158;
+  --system-indigo: #5e5ce6;
+  --system-orange: #ff9f0a;
+  --system-pink: #ff375f;
+  --system-purple: #bf5af2;
+  --system-red: #ff453a;
+  --system-teal: #40c8e0;
+  --system-yellow: #ffd60a;
+  --system-gray: #98989d;
+
+  --tint: var(--system-blue);
+
+  --label: rgba(255, 255, 255, 0.92);
+  --label-2: rgba(235, 235, 245, 0.6);
+  --label-3: rgba(235, 235, 245, 0.3);
+  --label-4: rgba(235, 235, 245, 0.16);
+
+  --separator: rgba(84, 84, 88, 0.65);
+  --separator-soft: rgba(84, 84, 88, 0.36);
+
+  --fill-1: rgba(120, 120, 128, 0.36);
+  --fill-2: rgba(120, 120, 128, 0.32);
+  --fill-3: rgba(120, 120, 128, 0.24);
+  --fill-4: rgba(120, 120, 128, 0.18);
+
+  --bg-window-solid: #1e1e1e;
+  --bg-window: var(--bg-window-solid);
+  --bg-content-solid: #1e1e1e;
+  --bg-content: var(--bg-content-solid);
+  --bg-raised-solid: #2c2c2e;
+  --bg-raised: var(--bg-raised-solid);
+  --bg-sunken-solid: #161617;
+  --bg-sunken: var(--bg-sunken-solid);
+  --bg-sidebar: rgba(38, 38, 40, 0.5);
+  --bg-toolbar: rgba(44, 44, 46, 0.55);
+  --bg-popover-solid: rgba(44, 44, 46, 0.86);
+  --bg-popover: var(--bg-popover-solid);
+  --bg-selected: rgba(255, 255, 255, 0.1);
+  --bg-hover: rgba(255, 255, 255, 0.06);
+
+  --material-border: rgba(255, 255, 255, 0.11);
+  --material-edge: rgba(255, 255, 255, 0.07);
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 2px 10px rgba(0, 0, 0, 0.5);
+  --shadow-3: 0 14px 36px rgba(0, 0, 0, 0.6);
+  --shadow-window: 0 24px 70px rgba(0, 0, 0, 0.7),
+                   0 4px 14px rgba(0, 0, 0, 0.5);
+  --shadow-popover: 0 10px 34px rgba(0, 0, 0, 0.55),
+                    0 0 0 0.5px rgba(255, 255, 255, 0.12);
+
+  --desk-1: #4a2b18;
+  --desk-2: #1b2b52;
+  --desk-3: #35215c;
+  --desk-4: #14161f;
+  --desk-5: #0a0b10;
+}
